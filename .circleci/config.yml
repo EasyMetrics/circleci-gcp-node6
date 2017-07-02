@@ -17,44 +17,14 @@ jobs:
           command: |
             apk add --no-cache py-pip=9.0.0-r1
             pip install docker-compose==1.12.0
-      - restore_cache:
-          keys:
-            - v1-{{ .Branch }}
-          paths:
-            - /caches/circleci-gcp-node6.tar
-      - run:
-          name: Load Docker image layer cache
-          command: |
-            set +o pipefail
-            docker load -i /caches/circleci-gcp-node6.tar | true
       - run:
           name: Build application Docker image
           command: |
-            docker build --cache-from=circleci-gcp-node6 -t circleci-gcp-node6 .
-      - run:
-          name: Save Docker image layer cache
-          command: |
-            mkdir -p /caches
-            docker save -o /caches/circleci-gcp-node6.tar circleci-gcp-node6
-      - save_cache:
-          key: v1-{{ .Branch }}-{{ epoch }}
-          paths:
-            - /caches/circleci-gcp-node6.tar
-      - run:
-          name: Decode Google Cloud Credentials
-          command: echo ${GOOGLE_AUTH} | base64 -d > ${HOME}/gcp-key.json
+            docker build -f Dockerfile -t circleci-gcp-node6 .
       - deploy:
           name: Push Docker image
           command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
               login="docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS"
               ${login}
-              docker tag circleci-gcp-node6 "easymetrics/circleci-gcp-node6:${CIRCLE_BRANCH}"
-              docker push "easymetrics/circleci-gcp-node6:${CIRCLE_BRANCH}"
-            fi
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              login="docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS"
-              ${login}
-              docker tag circleci-gcp-node6 "easymetrics/circleci-gcp-node6:${CIRCLE_BRANCH}"
-              docker push "easymetrics/circleci-gcp-node6:${CIRCLE_BRANCH}"
-            fi
+              docker tag circleci-gcp-node6 easymetrics/circleci-gcp-node6
+              docker push easymetrics/circleci-gcp-node6
