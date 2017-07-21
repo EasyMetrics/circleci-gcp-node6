@@ -5,7 +5,7 @@
     <img width="200" height="200" vspace="" hspace="25"
       src="https://cdn.worldvectorlogo.com/logos/easymetrics-inc.svg">
   </a>
-  <h1>CircleCI 2.0 Build container</h1>
+  <h1>CircleCI 2.0 Node 6.11 Build container</h1>
   <p>Docker Repository for the EasyMetrics NodeJS CircleCI build & deployment Image.<p>
 </div>
 
